@@ -1,0 +1,14 @@
+[tool.poetry]
+name = "crim2023"
+version = "0.1.0"
+description = "Python package for CRIM 2023 MLOps training"
+authors = ["francis <francisquintallauzon@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
