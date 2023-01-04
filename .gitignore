@@ -131,4 +131,7 @@ dmypy.json
 # MacOS
 .DS_Store
 
-
+# My stuff
+data/
+lightning_logs/
+.vscode/
