@@ -1,14 +1,13 @@
-
-import cv2
-import torch
 import urllib
 import random
 import tarfile
+from pathlib import Path
+import torch
+import pytorch_lightning as pl
+import cv2
 import numpy as np
 import albumentations as A
 from albumentations.pytorch import ToTensorV2
-import pytorch_lightning as pl
-from pathlib import Path
 from torch.utils.data import DataLoader, Dataset
 
 class CellDataset(Dataset):
@@ -16,13 +15,13 @@ class CellDataset(Dataset):
         self.images_directory = images_directory
         self.masks_directory = masks_directory
         self.filenames = mask_filenames
-        self.transform = transform
+        self.transform = transform  # test de sauve
 
     def __len__(self):
         return len(self.filenames)
 
     def __getitem__(self, idx):        
-        filename = self.filenames[idx] 
+        filename = self.filenames[idx]
         image = cv2.imread(str(self.images_directory/filename))
         if image is None or image.size==0:
            while True:
@@ -130,8 +129,8 @@ class CellDataModule(pl.LightningDataModule):
                     if self.max_images:
                         if count > self.max_images:
                             break
-        print("Initial images: {}, keeping {}".format(len(fnames_nofilter), 
-                                                      len(fnames)))          
+        print(f"Initial images: {len(fnames_nofilter)}, keeping {len(fnames)}")
+
         self.filenames = fnames #list(sorted(fnames))
 
         random.seed(43)
