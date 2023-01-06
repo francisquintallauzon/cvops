@@ -1,7 +1,7 @@
 [tool.poetry]
-name = "crim2023"
+name = "cvops"
 version = "0.1.0"
-description = "Python package for CRIM 2023 MLOps training"
+description = "A template for static image analysis ML Ops"
 authors = ["francis <francisquintallauzon@gmail.com>"]
 readme = "README.md"
 

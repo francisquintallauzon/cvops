@@ -1,4 +1,4 @@
-from crim2023.model import CellModel
+from cvops.model import CellModel
 
 
 def test_model():

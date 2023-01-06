@@ -1,6 +1,6 @@
 import pytorch_lightning as pl
-from crim2023.model import CellModel
-from crim2023.data import CellDataModule
+from cvops.model import CellModel
+from cvops.data import CellDataModule
 
 
 def train_model():

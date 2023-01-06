@@ -1,4 +1,4 @@
-from crim2023.data import CellDataModule
+from cvops.data import CellDataModule
 
 
 def test_CellDataModule():
