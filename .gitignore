@@ -134,5 +134,4 @@ dmypy.json
 # My stuff
 data/
 lightning_logs/
-.vscode/
 docs/build/
