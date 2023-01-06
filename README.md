@@ -1,2 +1,4 @@
-# crim2023
-ML Ops training at CRIM
+# Computer Vision Ops
+A simple template for ops static image analysis in computer vision.
+
+This repo is in active development
