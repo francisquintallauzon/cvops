@@ -1,10 +1,10 @@
+from collections import OrderedDict
 import torch
 import pytorch_lightning as pl
 from torch import nn
-from collections import OrderedDict
+
 
 class UNet(nn.Module):
-
     def __init__(self, in_channels=3, out_channels=1, init_features=32):
         super(UNet, self).__init__()
 
@@ -42,8 +42,8 @@ class UNet(nn.Module):
         )
 
     def forward(self, x):
-        enc1 = self.encoder1(x)        
-        enc2 = self.encoder2(self.pool1(enc1))        
+        enc1 = self.encoder1(x)
+        enc2 = self.encoder2(self.pool1(enc1))
         enc3 = self.encoder3(self.pool2(enc2))
         enc4 = self.encoder4(self.pool3(enc3))
         bottleneck = self.bottleneck(self.pool4(enc4))
@@ -98,9 +98,8 @@ class UNet(nn.Module):
         )
 
 
-#dice loss function
+# dice loss function
 class DiceLoss(torch.nn.Module):
-
     def __init__(self):
         super(DiceLoss, self).__init__()
         self.smooth = 1.0
@@ -108,61 +107,98 @@ class DiceLoss(torch.nn.Module):
     def forward(self, y_pred, y_true):
         assert y_pred.size() == y_true.size()
         intersection = (y_pred * y_true).sum()
-        dsc = (2. * intersection + self.smooth) / (y_pred.sum() + y_true.sum() + self.smooth)
-        return 1. - dsc
+        dsc = (2.0 * intersection + self.smooth) / (
+            y_pred.sum() + y_true.sum() + self.smooth
+        )
+        return 1.0 - dsc
+
 
 class BCELoss(torch.nn.Module):
-      def __init__(self):
-        super().__init__()
-        
-      def forward(self, y_pred, y_true):
+    def forward(self, y_pred, y_true):
         assert y_pred.size() == y_true.size()
-        return torch.mean(y_true * torch.log(y_pred) + (1-y_true)*torch.log(1-y_pred))
+        return torch.mean(
+            y_true * torch.log(y_pred) + (1 - y_true) * torch.log(1 - y_pred)
+        )
 
 
 class CellModel(pl.LightningModule):
-    def __init__(self, in_channels=3, out_channels=1, init_features=32, lr = 0.0001):
+    def __init__(self, in_channels=3, out_channels=1, init_features=32, lr=0.0001):
         super().__init__()
         self.optimizer = None
         self.scheduler = None
         self.lr = lr
-        self.unet = UNet()
+        self.unet = UNet(
+            in_channels=in_channels,
+            out_channels=out_channels,
+            init_features=init_features,
+        )
         self.diceloss = DiceLoss()
 
     def forward(self, x):
         return self.unet(x)
 
-    def training_step(self, train_batch, batch_idx):
-        input, labels = train_batch
-        pred = self.forward(input)
+    def training_step(self, train_batch):
+        inp, labels = train_batch
+        pred = self.forward(inp)
         loss = self.diceloss(pred, labels)
-        self.log("train_step_loss", loss, 
-                 on_step=True, on_epoch=False, prog_bar=True, logger=True)
+        self.log(
+            "train_step_loss",
+            loss,
+            on_step=True,
+            on_epoch=False,
+            prog_bar=True,
+            logger=True,
+        )
         return {"loss": loss}
 
     def training_epoch_end(self, outputs):
         avg_loss = torch.stack([x["loss"] for x in outputs]).mean()
-        self.log("train_loss", avg_loss, 
-                 on_step=False, on_epoch=True, prog_bar=True, logger=True, sync_dist=True)
+        self.log(
+            "train_loss",
+            avg_loss,
+            on_step=False,
+            on_epoch=True,
+            prog_bar=True,
+            logger=True,
+            sync_dist=True,
+        )
 
-    def validation_step(self, val_batch, batch_idx):
-        input, labels = val_batch
-        pred = self.forward(input)
+    def validation_step(self, val_batch):
+        inp, labels = val_batch
+        pred = self.forward(inp)
         loss = self.diceloss(pred, labels)
-        self.log("valid_step_loss", loss, 
-                 on_step=True, on_epoch=False, prog_bar=True, logger=True)
+        self.log(
+            "valid_step_loss",
+            loss,
+            on_step=True,
+            on_epoch=False,
+            prog_bar=True,
+            logger=True,
+        )
         return {"valid_step_loss": loss}
 
     def validation_epoch_end(self, outputs):
         avg_loss = torch.stack([x["valid_step_loss"] for x in outputs]).mean()
-        self.log("valid_loss", avg_loss, 
-                 on_step=False, on_epoch=True, prog_bar=True, logger=True, sync_dist=True)
+        self.log(
+            "valid_loss",
+            avg_loss,
+            on_step=False,
+            on_epoch=True,
+            prog_bar=True,
+            logger=True,
+            sync_dist=True,
+        )
 
     def configure_optimizers(self):
         self.optimizer = torch.optim.Adam(self.parameters(), lr=self.lr)
         self.scheduler = {
             "scheduler": torch.optim.lr_scheduler.ReduceLROnPlateau(
-                self.optimizer, mode="min", factor=0.2, patience=2, min_lr=self.lr*0.02, verbose=True,
+                self.optimizer,
+                mode="min",
+                factor=0.2,
+                patience=2,
+                min_lr=self.lr * 0.02,
+                verbose=True,
             ),
             "monitor": "valid_loss",
         }
