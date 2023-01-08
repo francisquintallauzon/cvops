@@ -20,26 +20,16 @@ class UNet(nn.Module):
 
         self.bottleneck = UNet._block(features * 8, features * 16, name="bottleneck")
 
-        self.upconv4 = nn.ConvTranspose2d(
-            features * 16, features * 8, kernel_size=2, stride=2
-        )
+        self.upconv4 = nn.ConvTranspose2d(features * 16, features * 8, kernel_size=2, stride=2)
         self.decoder4 = UNet._block((features * 8) * 2, features * 8, name="dec4")
-        self.upconv3 = nn.ConvTranspose2d(
-            features * 8, features * 4, kernel_size=2, stride=2
-        )
+        self.upconv3 = nn.ConvTranspose2d(features * 8, features * 4, kernel_size=2, stride=2)
         self.decoder3 = UNet._block((features * 4) * 2, features * 4, name="dec3")
-        self.upconv2 = nn.ConvTranspose2d(
-            features * 4, features * 2, kernel_size=2, stride=2
-        )
+        self.upconv2 = nn.ConvTranspose2d(features * 4, features * 2, kernel_size=2, stride=2)
         self.decoder2 = UNet._block((features * 2) * 2, features * 2, name="dec2")
-        self.upconv1 = nn.ConvTranspose2d(
-            features * 2, features, kernel_size=2, stride=2
-        )
+        self.upconv1 = nn.ConvTranspose2d(features * 2, features, kernel_size=2, stride=2)
         self.decoder1 = UNet._block(features * 2, features, name="dec1")
 
-        self.conv = nn.Conv2d(
-            in_channels=features, out_channels=out_channels, kernel_size=1
-        )
+        self.conv = nn.Conv2d(in_channels=features, out_channels=out_channels, kernel_size=1)
 
     def forward(self, x):
         enc1 = self.encoder1(x)
@@ -101,24 +91,20 @@ class UNet(nn.Module):
 # dice loss function
 class DiceLoss(torch.nn.Module):
     def __init__(self):
-        super(DiceLoss, self).__init__()
+        super().__init__()
         self.smooth = 1.0
 
     def forward(self, y_pred, y_true):
         assert y_pred.size() == y_true.size()
         intersection = (y_pred * y_true).sum()
-        dsc = (2.0 * intersection + self.smooth) / (
-            y_pred.sum() + y_true.sum() + self.smooth
-        )
+        dsc = (2.0 * intersection + self.smooth) / (y_pred.sum() + y_true.sum() + self.smooth)
         return 1.0 - dsc
 
 
 class BCELoss(torch.nn.Module):
     def forward(self, y_pred, y_true):
         assert y_pred.size() == y_true.size()
-        return torch.mean(
-            y_true * torch.log(y_pred) + (1 - y_true) * torch.log(1 - y_pred)
-        )
+        return torch.mean(y_true * torch.log(y_pred) + (1 - y_true) * torch.log(1 - y_pred))
 
 
 class CellModel(pl.LightningModule):
@@ -163,10 +149,11 @@ class CellModel(pl.LightningModule):
             sync_dist=True,
         )
 
-    def validation_step(self, val_batch):
+    def validation_step(self, val_batch, batch_idx):
         inp, labels = val_batch
         pred = self.forward(inp)
         loss = self.diceloss(pred, labels)
+        print(f"\nValidaton Step batch index {batch_idx}; loss = {loss}")
         self.log(
             "valid_step_loss",
             loss,

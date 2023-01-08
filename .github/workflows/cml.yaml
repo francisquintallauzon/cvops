@@ -1,0 +1,28 @@
+name: cml
+on: [push]
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    # optionally use a convenient Ubuntu LTS + DVC + CML image
+    # container: ghcr.io/iterative/cml:0-dvc2-base1
+    steps:
+      - uses: actions/checkout@v3
+      
+      - uses: iterative/setup-cml@v1
+
+      - name: Install poetry
+        run: pip install poetry
+
+      - name: Install dependencies
+        run: poetry install
+
+      - name: Train model
+        run:
+            poetry run python ./cvops/train.py
+
+      - name: Post reports as comments in GitHub PRs
+        env:
+          REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          poetry run python ./cvops/report/pull_request_report.py
+          cml comment create pull_request_report.md

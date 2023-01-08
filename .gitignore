@@ -131,7 +131,9 @@ dmypy.json
 # MacOS
 .DS_Store
 
-# My stuff
-data/
-lightning_logs/
+# Project Stuff
+data/datasets
+data/logs
 docs/build/
+sandbox.py
+pull_request_report.md

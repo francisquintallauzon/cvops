@@ -16,9 +16,7 @@ from torch.utils.data import DataLoader, Dataset
 class CellDataset(Dataset):
     """Cell torch dataset"""
 
-    def __init__(
-        self, images_directory, masks_directory, mask_filenames, transform=None
-    ):
+    def __init__(self, images_directory, masks_directory, mask_filenames, transform=None):
         self.images_directory = images_directory
         self.masks_directory = masks_directory
         self.filenames = mask_filenames
@@ -123,7 +121,7 @@ class CellDataModule(pl.LightningDataModule):
 
         if not self.image_dir.exists() or not self.mask_dir.exists():
             if not self.data_path.exists():
-                self.data_path.mkdir()
+                self.data_path.mkdir(parents=True)
             if not self.download_path.exists():
                 urllib.request.urlretrieve(dset_url, filename=self.download_path)
             with tarfile.open(self.download_path, "r") as zip_ref:
@@ -138,11 +136,7 @@ class CellDataModule(pl.LightningDataModule):
                 fnames_nofilter.append(mask_fullpath)
                 image_fullpath = self.image_dir / mask_fullpath.name
                 image = cv2.imread(str(image_fullpath))
-                if (
-                    image is not None
-                    and image.size != 0
-                    and 0.9 <= image.shape[1] / image.shape[0] < 1.4
-                ):
+                if image is not None and image.size != 0 and 0.9 <= image.shape[1] / image.shape[0] < 1.4:
                     fnames.append(image_fullpath.name)
                     widths.append(image.shape[1])
                     count += 1
@@ -158,9 +152,7 @@ class CellDataModule(pl.LightningDataModule):
         n_val = int(len(self.filenames) * 0.2)
         self.filenames_valid = self.filenames[:n_val]
         self.filenames_train = self.filenames[n_val:]
-        print(
-            f"{len(self.filenames_train)} train, {len(self.filenames_valid)} validation"
-        )
+        print(f"{len(self.filenames_train)} train, {len(self.filenames_valid)} validation")
 
     def setup(self, stage: str):
         """

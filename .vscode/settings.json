@@ -8,5 +8,8 @@
     "editor.formatOnSave": true,
     "python.linting.enabled": true,
     "python.linting.lintOnSave": true,
-    "python.linting.pylintEnabled": true
+    "python.linting.pylintEnabled": true,
+    "files.exclude": {
+        "**/.git": false
+    }
 }

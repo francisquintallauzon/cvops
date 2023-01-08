@@ -1,4 +1,14 @@
 # Questions
-Pas certain de comprendre l'utilisation de bump2version dans le contexte: bump2version semble cibler des fichiers particuliers mais  je ne suis pas certain de voir le benefice.
+1. Est-ce qu'un bon workflow pour merger des branches avec git serait le suivant?
 
-Je ne suis pas certain que voir comment utiliser tox dans notre concept.  Est-ce qu'une premiere utilisation serait pour automatiser les tests de pre-commit?  Est-ce que ça pourrait être de tester plusieurs environnement genre plusieurs versions de python ou encore plusieurs types d'OS?
+    1. Rebase
+    2. Squash
+    3.  Merge
+
+    Mon feeling, c'est ce qui donnerait l'historique le plus clean!
+
+    Ref: https://medium.com/singlestone/a-git-workflow-using-rebase-1b1210de83e5
+
+
+2. Dans un contexte où le training prend plusieurs heures, j'imagine qu'on ne veut pas lancer un un training à chaque commit dans un github action.  Quelle serait une stratégie dans ce contexte?  
+

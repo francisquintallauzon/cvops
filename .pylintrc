@@ -229,7 +229,7 @@ variable-naming-style=snake_case
 # Regular expression matching correct variable names. Overrides variable-
 # naming-style. If left empty, variable names will be checked with the set
 # naming style.
-#variable-rgx=
+variable-rgx=[a-z0-9_]{1,30}$
 
 
 [CLASSES]
@@ -411,7 +411,7 @@ disable=raw-checker-failed,
         useless-suppression,
         deprecated-pragma,
         use-symbolic-message-instead,
-        C0114, C0115, C0116, C0301, R0901, W0221, C0301
+        C0114, C0115, C0116, C0301, R0901, W0221, C0301, R0902
 
 
 # Enable the message, report, category or checker with the given id(s). You can
