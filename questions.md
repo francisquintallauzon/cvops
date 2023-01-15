@@ -11,4 +11,10 @@
 
 
 2. Dans un contexte où le training prend plusieurs heures, j'imagine qu'on ne veut pas lancer un un training à chaque commit dans un github action.  Quelle serait une stratégie dans ce contexte?  
+    * pre-commit tests
+    * smoke testing
 
+
+3. Je pense qu'il y a une erreur dans le titre.  On parle de DVC, mais c'est vraiment plus CML qui est le sujet. https://mentorat.crim.ca/mod/lesson/view.php?id=264
+
+4. Erreur dans le texte.  On parle de CML, mais c'est DVC qui est le sujet. https://mentorat.crim.ca/mod/lesson/view.php?id=265
