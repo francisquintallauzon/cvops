@@ -61,6 +61,16 @@ class CellDataModule(pl.LightningDataModule):
         """
         Initialization of inherited lightning data module
         """
+
+        # TODO In line with TODO below, `download_path` and related variables could be user actionnable
+        # Explanation: The objective is to make this class as reusable as possible. On a side note
+        # This class used a lot of variables. As much as possible, I would try to reduce that number.
+        # This could be done with a composition approach (say, using data classes), configuration files, dictionaries
+        # or even with specific tools, like Hydra (https://hydra.cc/docs/intro/)
+        #
+        # Some of the variables don't appear to be in use
+
+
         super().__init__()
         self.img_resize_size = img_resize_size
         self.data_path = Path("data/datasets/")
@@ -116,6 +126,12 @@ class CellDataModule(pl.LightningDataModule):
 
     def prepare_data(self):
 
+        # TODO Data input could be a parameter that is actionnable by user, not buried in the module
+        # Explanation: Over the course of a project, data input will invariably change. This will be
+        # especially true as a project heads into retraining cycles, with data versioning and different
+        # sources. Ultimately, a DataPreparation interface (Abstract Class) as a base for different
+        # data sources could be a good
+
         # dset_url = "https://www.kaggle.com/datasets/vbookshelf/synthetic-cell-images-and-masks-bbbc005-v1"
         dset_url = "https://www.googleapis.com/drive/v3/files/1UJMyQmI8bZCWB2UKWqa0F00I7f_nz-2q?alt=media&key=AIzaSyDhmuR1Oj_myOqYXEXBQ0J3FN1-cwvR9zI"
 
@@ -158,6 +174,12 @@ class CellDataModule(pl.LightningDataModule):
         """
         Create train and valid datasets
         """
+
+        # TODO This function is essentially 3 functions in one, behind a flag variable. Would be preferable to be in
+        #  separate functions.
+        # Explanation: This kind of logic (switch cases) are better left near the User logic (UI, CLI, ect.), where
+        # as having`fit`, `test` and `predict` functions separately is easier to understand the purpose of
+        # each function, while also each having a single purpose.
 
         print(f"In CellDataModule.setup; stage = {stage}")
         if stage == "fit":
