@@ -137,3 +137,6 @@ data/logs
 docs/build/
 sandbox.py
 pull_request_report.md
+.vscode
+.ideas
+Notebook/data
