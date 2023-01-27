@@ -1,3 +1,5 @@
+# pylint: disable=invalid-name
+
 from cvops.data import CellDataModule
 
 
@@ -8,3 +10,5 @@ def test_CellDataModule():
     celldm.setup(stage="fit")
 
     print("I am super happy with the test")
+
+    assert celldm.dataset_train is not None
