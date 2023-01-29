@@ -153,13 +153,12 @@ class CellModel(pl.LightningModule):
         inp, labels = val_batch
         pred = self.forward(inp)
         loss = self.diceloss(pred, labels)
-        print(f"\nValidaton Step batch index {batch_idx}; loss = {loss}")
         self.log(
             "valid_step_loss",
             loss,
             on_step=True,
             on_epoch=False,
-            prog_bar=True,
+            prog_bar=False,
             logger=True,
         )
         return {"valid_step_loss": loss}

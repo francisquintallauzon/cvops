@@ -7,22 +7,25 @@ jobs:
     # container: ghcr.io/iterative/cml:0-dvc2-base1
     steps:
       - uses: actions/checkout@v3
-      
+
       - uses: iterative/setup-cml@v1
+      - uses: iterative/setup-dvc@v1
 
-      - name: Install poetry
-        run: pip install poetry
+      - name: Pull data with DVC
+        env:
+          GDRIVE_CREDENTIALS_DATA: ${{ secrets.GDRIVE_CREDENTIALS_DATA }}
+        run: |
+          dvc pull
 
-      - name: Install dependencies
-        run: poetry install
+      - name: Install poetry & dependencies
+        run: |
+              pip install poetry
+              poetry install
 
-      - name: Train model
-        run:
-            poetry run python ./cvops/train.py
-
-      - name: Post reports as comments in GitHub PRs
+      - name: Train model & post reports as comments in GitHub PRs
         env:
           REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          poetry run python ./cvops/report/pull_request_report.py
-          cml comment create pull_request_report.md
+            poetry run python ./cvops/train.py
+            poetry run python ./cvops/report/pull_request_report.py
+            cml comment create pull_request_report.md
